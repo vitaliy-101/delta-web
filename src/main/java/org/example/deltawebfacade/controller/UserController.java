@@ -7,6 +7,7 @@ import org.example.deltawebfacade.dto.UserResponse;
 import org.example.deltawebfacade.service.auth.JwtService;
 import org.example.deltawebfacade.service.auth.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -24,12 +25,10 @@ public class UserController {
     @GetMapping("/user")
     @Operation(summary = "Получить информацию о пользователе по токену")
     public ResponseEntity<UserResponse> getUserInfo(@RequestHeader("Authorization") String token){
-        String jwt = token.substring(7);
-        String email = jwtService.extractUsername(jwt);
-        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
         UserResponse userResponse = new UserResponse(userDetails.getUsername());
         return ResponseEntity.ok(userResponse);
     }
-
 
 }
