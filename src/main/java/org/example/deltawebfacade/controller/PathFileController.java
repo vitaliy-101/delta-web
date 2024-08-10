@@ -32,8 +32,8 @@ public class PathFileController {
     @Operation(summary = "Загрузка одного или нескольких файлов для library", description = "В данном случае должны указать автора")
     @PostMapping(path = "/library", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE },
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<FileResponseUponReceipt> saveFileLibrary(FileRequestLibrary fileRequestLibrary,
-                                                         @RequestParam(value = "files") List<MultipartFile> files) throws Exception {
+    public List<FileResponseUponReceipt> saveFileLibrary(@RequestBody @ModelAttribute FileRequestLibrary fileRequestLibrary) throws Exception {
+        List<MultipartFile> files = fileRequestLibrary.getFiles();
         PathParams pathParams = new PathParams("library", fileRequestLibrary.getAuthor(), 0, fileRequestLibrary.getPath(), "Empty");
         List<FileData> fileData = fileService.uploadFiles(pathParams, files);
         return pathFileConverter.convertFromModelList(pathParams, fileData);
@@ -42,7 +42,7 @@ public class PathFileController {
     @Operation(summary = "Метод для создания папок", description = "Передаем так для всех страниц, тк можем отправлять json с любыми параметрами")
     @PostMapping(path = "/{page}")
     public PathResponse savePath(@PathVariable("page") String page,
-                                 PathRequest pathRequest) {
+                                 @RequestBody PathRequest pathRequest) {
         PathParams pathParams = pathFileConverter.convertFromPathRequest(pathRequest, page);
         FileData fileData = fileService.uploadPath(pathParams);
         return pathFileConverter.simpleConvert(fileData, PathResponse.class);
