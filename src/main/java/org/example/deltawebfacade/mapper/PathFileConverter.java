@@ -1,15 +1,16 @@
 package org.example.deltawebfacade.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.example.deltawebfacade.dto.file.FileBaseDto;
-import org.example.deltawebfacade.dto.file.FileResponseDespatch;
-import org.example.deltawebfacade.dto.file.FileResponseUponReceipt;
+import org.example.deltawebfacade.dto.file.*;
+import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
+import org.example.deltawebfacade.dto.file.library.PathLibraryResponse;
 import org.example.deltawebfacade.model.gallery.FileData;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -27,12 +28,30 @@ public class PathFileConverter extends DtoConverter {
 
     public FileResponseUponReceipt convertFromModel(FileData fileData, String page, MultipartFile file) {
         FileResponseUponReceipt fileResponseUponReceipt = simpleConvert(fileData, FileResponseUponReceipt.class);
-        fileResponseUponReceipt.setSize(file.getSize());
         fileResponseUponReceipt.setDownloadURL(getDownloadUrl(fileResponseUponReceipt, page));
         return fileResponseUponReceipt;
     }
 
-    private String getDownloadUrl(FileBaseDto fileBaseDto, String page) {
+    public List<FileResponseUponReceipt> convertFromModelList(PathParams pathParams, List<FileData> fileDataList) {
+        List<FileResponseUponReceipt> fileResponseUponReceiptList  = simpleConvert(fileDataList, FileResponseUponReceipt.class);
+        for (FileResponseUponReceipt fileResponseUponReceipt : fileResponseUponReceiptList) {
+            String downloadUrl = getDownloadUrl(fileResponseUponReceipt, pathParams.getPage());
+            fileResponseUponReceipt.setDownloadURL(downloadUrl);
+        }
+        return fileResponseUponReceiptList;
+    }
+
+    public PathParams convertFromPathRequest(PathRequest pathRequest, String page) {
+        PathParams pathParams = new PathParams();
+        pathParams.setAuthor(pathRequest.getAuthor() == null ? "Empty" : pathRequest.getAuthor());
+        pathParams.setYear(pathRequest.getYear() == null ? 0 : pathRequest.getYear());
+        pathParams.setName(pathRequest.getName());
+        pathParams.setPath(pathRequest.getPath());
+        pathParams.setPage(page);
+        return pathParams;
+    }
+
+    public String getDownloadUrl(FileBaseDto fileBaseDto, String page) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/delta/path-pages/")

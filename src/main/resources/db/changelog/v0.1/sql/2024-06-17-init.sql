@@ -22,8 +22,13 @@ create table if not exists files
 (
     id BIGSERIAL,
     name VARCHAR,
-    type VARCHAR,
+    type INTEGER,
     file_data bytea,
     path VARCHAR,
+    author VARCHAR,
+    creation_date VARCHAR,
+    year INTEGER,
     CONSTRAINT pk_files primary key (id)
-)
+);
+
+

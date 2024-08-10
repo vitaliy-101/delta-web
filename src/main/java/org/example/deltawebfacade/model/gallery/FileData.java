@@ -1,6 +1,7 @@
 package org.example.deltawebfacade.model.gallery;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 @Entity
@@ -18,10 +19,17 @@ public class FileData {
     @Column(name = "name")
     private String name;
     @Column(name = "type")
-    private String type;
+    private Integer type;
     @Column(name = "file_data")
     private byte[] fileData;
     @Column(name = "path")
     private String path;
+    @Column(name = "author")
+    private String author;
+    @Column(name = "creation_date")
+    private String creationDate;
+    @Column(name = "year")
+    private Integer year;
+
 
 }

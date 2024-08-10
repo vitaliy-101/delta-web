@@ -9,6 +9,6 @@ import lombok.Setter;
 public class FileBaseDto {
     private Long id;
     private String name;
-    private String type;
+    private Integer type;
     private String downloadURL;
 }
