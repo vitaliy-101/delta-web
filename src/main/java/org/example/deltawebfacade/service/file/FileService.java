@@ -2,15 +2,18 @@ package org.example.deltawebfacade.service.file;
 
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.constants.MediaTypeAssociation;
-import org.example.deltawebfacade.dto.file.PathParams;
+import org.example.deltawebfacade.dto.file.FileParams;
+import org.example.deltawebfacade.dto.file.gallery.FileGalleryResponse;
+import org.example.deltawebfacade.dto.file.paper.FilePaperResponse;
+import org.example.deltawebfacade.dto.path.PathParams;
+import org.example.deltawebfacade.dto.path.PathResponse;
 import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
-import org.example.deltawebfacade.dto.file.library.PathLibraryResponse;
+import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
+import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.exceptions.NotFoundByIdException;
-import org.example.deltawebfacade.file_system.File;
 import org.example.deltawebfacade.file_system.FileSystemGenerator;
-import org.example.deltawebfacade.file_system.Folder;
 import org.example.deltawebfacade.mapper.DtoConverter;
-import org.example.deltawebfacade.mapper.PathFileConverter;
 import org.example.deltawebfacade.model.gallery.FileData;
 import org.example.deltawebfacade.repository.FileRepository;
 import org.example.deltawebfacade.utils.FileUtils;
@@ -38,15 +41,25 @@ public class FileService {
         return 1;
     }
 
-    public List<FileData> uploadFiles(PathParams pathParams, List<MultipartFile> files) throws Exception {
+    private PathResponse createBasePathResponse(Integer countFiles, String page) {
+        PathResponse pathResponse = new PathResponse();
+        pathResponse.setName(page);
+        pathResponse.setPath("");
+        pathResponse.setType(0);
+        pathResponse.setCountFiles(countFiles);
+        return pathResponse;
+    }
+
+
+    public List<FileData> uploadFiles(FileParams fileParams, List<MultipartFile> files) throws Exception {
         List<FileData> fileDataList = new ArrayList<>();
         for (MultipartFile file : files) {
-            fileDataList.add(uploadFile(pathParams, file));
+            fileDataList.add(uploadFile(fileParams, file));
         }
         return fileDataList;
     }
 
-    public FileData uploadFile(PathParams pathParams, MultipartFile file) throws Exception {
+    public FileData uploadFile(FileParams fileParams, MultipartFile file) throws Exception {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
             if (fileName.contains("..") || fileName.contains("/")) {
@@ -55,10 +68,11 @@ public class FileService {
             FileData fileData = fileRepository.save(FileData.builder()
                     .name(fileName)
                     .type(getIntegerType(file.getContentType()))
+                    .typeStr(file.getContentType())
                     .fileData(FileUtils.compressFile(file.getBytes()))
-                    .path(pathParams.getPage() + pathParams.getPath())
-                    .author(pathParams.getAuthor())
-                    .year(pathParams.getYear())
+                    .path(fileParams.getPage() + fileParams.getPath())
+                    .author(fileParams.getAuthor())
+                    .year(fileParams.getYear())
                     .creationDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()))
                     .build());
             return fileRepository.save(fileData);
@@ -71,6 +85,7 @@ public class FileService {
         FileData fileData = fileRepository.save(FileData.builder()
                 .name(pathParams.getName())
                 .type(0)
+                .typeStr("Path")
                 .path(pathParams.getPage() + pathParams.getPath())
                 .author(pathParams.getAuthor())
                 .year(pathParams.getYear())
@@ -90,12 +105,26 @@ public class FileService {
 
     public PathLibraryResponse getFilesLibrary(String page) {
         List<FileData> fileDataList = getAllFilesByPage(page);
-        PathLibraryResponse pathLibraryResponse = new PathLibraryResponse();
-        pathLibraryResponse.setName(page);
-        pathLibraryResponse.setPath("");
-        pathLibraryResponse.setType(0);
-        pathLibraryResponse.setCountFiles(fileDataList.size());
-        return fileSystemGenerator.convertFilesToLibraryFolderStructure(dtoConverter.simpleConvert(fileDataList, FileLibraryResponse.class), pathLibraryResponse);
+        return fileSystemGenerator.convertFilesToLibraryFolderStructure(
+                dtoConverter.simpleConvert(fileDataList, FileLibraryResponse.class),
+                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathLibraryResponse.class)
+        );
+    }
+
+    public PathGalleryResponse getFilesGallery(String page) {
+        List<FileData> fileDataList = getAllFilesByPage(page);
+        return fileSystemGenerator.convertFilesToGalleryFolderStructure(
+                dtoConverter.simpleConvert(fileDataList, FileGalleryResponse.class),
+                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathGalleryResponse.class)
+        );
+    }
+
+    public PathPaperResponse getFilesPaper(String page) {
+        List<FileData> fileDataList = getAllFilesByPage(page);
+        return fileSystemGenerator.convertFilesToPaperFolderStructure(
+                dtoConverter.simpleConvert(fileDataList, FilePaperResponse.class),
+                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathPaperResponse.class)
+        );
     }
 
     public Boolean existById(Long id) {

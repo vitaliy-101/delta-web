@@ -2,56 +2,46 @@ package org.example.deltawebfacade.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
-import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
-import org.example.deltawebfacade.dto.file.library.PathLibraryResponse;
+import org.example.deltawebfacade.dto.path.PathParams;
+import org.example.deltawebfacade.dto.path.PathRequest;
 import org.example.deltawebfacade.model.gallery.FileData;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class PathFileConverter extends DtoConverter {
 
-    public List<FileResponseDespatch> convertFromModelList(List<FileData> fileDataList, String page) {
-        List<FileResponseDespatch> fileResponseDespatchList = simpleConvert(fileDataList, FileResponseDespatch.class);
-        for (FileResponseDespatch fileResponseDespatch : fileResponseDespatchList) {
-            String downloadUrl = getDownloadUrl(fileResponseDespatch, page);
-            fileResponseDespatch.setDownloadURL(downloadUrl);
-        }
-        return fileResponseDespatchList;
-    }
-
-    public FileResponseUponReceipt convertFromModel(FileData fileData, String page, MultipartFile file) {
-        FileResponseUponReceipt fileResponseUponReceipt = simpleConvert(fileData, FileResponseUponReceipt.class);
-        fileResponseUponReceipt.setDownloadURL(getDownloadUrl(fileResponseUponReceipt, page));
-        return fileResponseUponReceipt;
-    }
-
-    public List<FileResponseUponReceipt> convertFromModelList(PathParams pathParams, List<FileData> fileDataList) {
+    public List<FileResponseUponReceipt> convertFromModelList(FileParams fileParams, List<FileData> fileDataList) {
         List<FileResponseUponReceipt> fileResponseUponReceiptList  = simpleConvert(fileDataList, FileResponseUponReceipt.class);
         for (FileResponseUponReceipt fileResponseUponReceipt : fileResponseUponReceiptList) {
-            String downloadUrl = getDownloadUrl(fileResponseUponReceipt, pathParams.getPage());
+            String downloadUrl = getDownloadUrl(fileResponseUponReceipt, fileParams.getPage());
             fileResponseUponReceipt.setDownloadURL(downloadUrl);
         }
         return fileResponseUponReceiptList;
     }
 
     public PathParams convertFromPathRequest(PathRequest pathRequest, String page) {
-        PathParams pathParams = new PathParams();
-        pathParams.setAuthor(pathRequest.getAuthor() == null ? "Empty" : pathRequest.getAuthor());
-        pathParams.setYear(pathRequest.getYear() == null ? 0 : pathRequest.getYear());
+        FileParams fileParams = convertFromFileRequest(pathRequest, page);
+        PathParams pathParams = simpleConvert(fileParams, PathParams.class);
         pathParams.setName(pathRequest.getName());
-        pathParams.setPath(pathRequest.getPath());
-        pathParams.setPage(page);
         return pathParams;
     }
 
-    public String getDownloadUrl(FileBaseDto fileBaseDto, String page) {
+    public FileParams convertFromFileRequest(FileRequest fileRequest, String page) {
+        FileParams fileParams = new FileParams();
+        fileParams.setAuthor(fileRequest.getAuthor() == null ? "Empty" : fileRequest.getAuthor());
+        fileParams.setYear(fileRequest.getYear() == null ? 0 : fileRequest.getYear());
+        fileParams.setPath(fileRequest.getPath());
+        fileParams.setPage(page);
+        return fileParams;
+    }
+
+
+
+    public String getDownloadUrl(FileBaseResponseDto fileBaseDto, String page) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/delta/path-pages/")

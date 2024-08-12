@@ -23,6 +23,7 @@ create table if not exists files
     id BIGSERIAL,
     name VARCHAR,
     type INTEGER,
+    type_str VARCHAR,
     file_data bytea,
     path VARCHAR,
     author VARCHAR,

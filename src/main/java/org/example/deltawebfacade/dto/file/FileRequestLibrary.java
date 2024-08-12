@@ -15,5 +15,4 @@ import java.util.List;
 public class FileRequestLibrary extends FileRequest {
 
     private String author;
-    private List<MultipartFile> files;
 }

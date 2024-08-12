@@ -5,5 +5,5 @@ import org.springframework.http.MediaType;
 
 @Getter
 @Setter
-public class FileResponseUponReceipt extends FileBaseDto {
+public class FileResponseUponReceipt extends FileBaseResponseDto {
 }

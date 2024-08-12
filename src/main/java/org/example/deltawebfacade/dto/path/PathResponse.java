@@ -1,4 +1,4 @@
-package org.example.deltawebfacade.dto.file;
+package org.example.deltawebfacade.dto.path;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileResponse extends FileBaseDto {
-    private String creationDate;
-    private String path;
+public class PathResponse extends PathBaseDto {
+    private Integer countFiles;
 }

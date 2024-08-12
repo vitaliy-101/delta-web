@@ -1,4 +1,4 @@
-package org.example.deltawebfacade.dto.file;
+package org.example.deltawebfacade.dto.path;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PathParams {
-    private String page;
-    private String author;
-    private Integer year;
-    private String path;
+public class PathBaseDto {
     private String name;
+    private String path;
+    private Integer type;
+    private String creationDate;
 }

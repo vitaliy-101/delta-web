@@ -1,13 +1,13 @@
 package org.example.deltawebfacade.file_system;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.example.deltawebfacade.dto.file.gallery.FileGalleryResponse;
 import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
-import org.example.deltawebfacade.dto.file.library.PathLibraryResponse;
-import org.example.deltawebfacade.mapper.DtoConverter;
+import org.example.deltawebfacade.dto.file.paper.FilePaperResponse;
+import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
+import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.mapper.PathFileConverter;
-import org.example.deltawebfacade.model.gallery.FileData;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -67,6 +67,60 @@ public class FileSystemGenerator {
                 PathLibraryResponse currentFolder = pathFileConverter.simpleConvert(file, PathLibraryResponse.class);
                 currentFolder.setCountFiles(currentFiles.size());
                 folder.addFolder(convertFilesToLibraryFolderStructure(currentFiles, currentFolder));
+            }
+        }
+        return folder;
+    }
+
+    public PathGalleryResponse convertFilesToGalleryFolderStructure(List<FileGalleryResponse> files, PathGalleryResponse folder) {
+        folder.setFiles(new ArrayList<>());
+        folder.setFolders(new ArrayList<>());
+        for (FileGalleryResponse file : files) {
+            String pathName = folder.getPath() + "/" + folder.getName();
+            if (folder.getPath().isEmpty()) {
+                pathName = folder.getName();
+            }
+            if (file.getPath().equals(pathName)) {
+                if (file.getType() != 0) {
+                    file.setDownloadURL(pathFileConverter.getDownloadUrl(file, "gallery"));
+                    folder.addFile(file);
+                    continue;
+                }
+                final String pathNameFinal = pathName + "/" + file.getName();
+                List<FileGalleryResponse> currentFiles = files
+                        .stream()
+                        .filter(currentFile -> currentFile.getPath().startsWith(pathNameFinal))
+                        .toList();
+                PathGalleryResponse currentFolder = pathFileConverter.simpleConvert(file, PathGalleryResponse.class);
+                currentFolder.setCountFiles(currentFiles.size());
+                folder.addFolder(convertFilesToGalleryFolderStructure(currentFiles, currentFolder));
+            }
+        }
+        return folder;
+    }
+
+    public PathPaperResponse convertFilesToPaperFolderStructure(List<FilePaperResponse> files, PathPaperResponse folder) {
+        folder.setFiles(new ArrayList<>());
+        folder.setFolders(new ArrayList<>());
+        for (FilePaperResponse file : files) {
+            String pathName = folder.getPath() + "/" + folder.getName();
+            if (folder.getPath().isEmpty()) {
+                pathName = folder.getName();
+            }
+            if (file.getPath().equals(pathName)) {
+                if (file.getType() != 0) {
+                    file.setDownloadURL(pathFileConverter.getDownloadUrl(file, "gallery"));
+                    folder.addFile(file);
+                    continue;
+                }
+                final String pathNameFinal = pathName + "/" + file.getName();
+                List<FilePaperResponse> currentFiles = files
+                        .stream()
+                        .filter(currentFile -> currentFile.getPath().startsWith(pathNameFinal))
+                        .toList();
+                PathPaperResponse currentFolder = pathFileConverter.simpleConvert(file, PathPaperResponse.class);
+                currentFolder.setCountFiles(currentFiles.size());
+                folder.addFolder(convertFilesToPaperFolderStructure(currentFiles, currentFolder));
             }
         }
         return folder;

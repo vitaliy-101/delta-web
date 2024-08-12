@@ -1,11 +1,17 @@
 package org.example.deltawebfacade.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
-import org.example.deltawebfacade.dto.file.library.PathLibraryResponse;
-import org.example.deltawebfacade.file_system.Folder;
+import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
+import org.example.deltawebfacade.dto.path.PathBaseDto;
+import org.example.deltawebfacade.dto.path.PathParams;
+import org.example.deltawebfacade.dto.path.PathRequest;
+import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.mapper.PathFileConverter;
 import org.example.deltawebfacade.model.gallery.FileData;
 import org.example.deltawebfacade.service.file.FileService;
@@ -19,8 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
 import java.util.List;
-//типы файлов: 0 - папка
-//path имеет ввид - /psasd/asdasd
 @RestController()
 @RequiredArgsConstructor
 @RequestMapping("/delta/path-pages")
@@ -29,23 +33,24 @@ public class PathFileController {
     private final FileService fileService;
     private final PathFileConverter pathFileConverter;
 
-    @Operation(summary = "Загрузка одного или нескольких файлов для library", description = "В данном случае должны указать автора")
-    @PostMapping(path = "/library", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE },
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<FileResponseUponReceipt> saveFileLibrary(@RequestBody @ModelAttribute FileRequestLibrary fileRequestLibrary) throws Exception {
-        List<MultipartFile> files = fileRequestLibrary.getFiles();
-        PathParams pathParams = new PathParams("library", fileRequestLibrary.getAuthor(), 0, fileRequestLibrary.getPath(), "Empty");
-        List<FileData> fileData = fileService.uploadFiles(pathParams, files);
-        return pathFileConverter.convertFromModelList(pathParams, fileData);
+    @Operation(summary = "Загрузка одного или нескольких файлов", description = "Передаем параметры файлов (расположение, автора и тд)" +
+            " Некоторые параметры указывать не обязтаельно. Метод выполнять в Postman")
+    @PostMapping(path = "/{page}/file")
+    public List<FileResponseUponReceipt> saveFileLibrary(@RequestPart("fileRequest") FileRequest fileRequest,
+                                                         @RequestPart("files") @Parameter(description = "файлы") List<MultipartFile> files,
+                                                         @PathVariable(name = "page") String page) throws Exception {
+        FileParams fileParams = pathFileConverter.convertFromFileRequest(fileRequest, page);
+        List<FileData> fileData = fileService.uploadFiles(fileParams, files);
+        return pathFileConverter.convertFromModelList(fileParams, fileData);
     }
 
     @Operation(summary = "Метод для создания папок", description = "Передаем так для всех страниц, тк можем отправлять json с любыми параметрами")
     @PostMapping(path = "/{page}")
-    public PathResponse savePath(@PathVariable("page") String page,
-                                 @RequestBody PathRequest pathRequest) {
+    public PathBaseDto savePath(@PathVariable("page") String page,
+                                @RequestBody PathRequest pathRequest) {
         PathParams pathParams = pathFileConverter.convertFromPathRequest(pathRequest, page);
         FileData fileData = fileService.uploadPath(pathParams);
-        return pathFileConverter.simpleConvert(fileData, PathResponse.class);
+        return pathFileConverter.simpleConvert(fileData, PathBaseDto.class);
     }
 
 
@@ -54,22 +59,32 @@ public class PathFileController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") String fileId, @PathVariable("page") String page) throws Exception {
         FileData file = fileService.downloadFile(fileId);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(file.getType().toString()))
+                .contentType(MediaType.parseMediaType(file.getTypeStr()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "fileUpload; filename=\""+ URLEncoder.encode(file.getName(), "UTF-8")
                         +"\"").body(new ByteArrayResource(file.getFileData()));
     }
-
-    @Operation(summary = "НЕ ИСПОЛЬЗУЕТСЯ. Получить все файлы для странички", description = "Получаем все файлы, которые должны лежать на данной страничке," +
-            "формат: id, имя, тип, ссылка для скачивания, папка в которой лежит")
-    @GetMapping("/{page}")
-    public List<FileResponseDespatch> getAllFilesByPage(@PathVariable("page") String page) {
-        List<FileData> fileData = fileService.getAllFilesByPage(page);
-        return pathFileConverter.convertFromModelList(fileData, page);
-    }
-
+    @Operation(summary = "Все файлы для странички library",
+            description = "Получаем дерево папок и файлов, которые в начале своего path содержат library/")
     @GetMapping("/library")
     public PathLibraryResponse getAllFilesLibrary() {
+        //запихнуть в константы
         return fileService.getFilesLibrary("library");
+    }
+
+    @Operation(summary = "Все файлы для странички gallery",
+            description = "Получаем дерево папок и файлов, которые в начале своего path содержат gallery/")
+    @GetMapping("/gallery")
+    public PathGalleryResponse getAllFilesGallery() {
+        //запихнуть в константы
+        return fileService.getFilesGallery("gallery");
+    }
+
+    @Operation(summary = "Все файлы для странички paper",
+            description = "Получаем дерево папок и файлов, которые в начале своего path содержат paper/")
+    @GetMapping("/paper")
+    public PathPaperResponse getAllFilesPaper() {
+        //запихнуть в константы
+        return fileService.getFilesPaper("paper");
     }
 
     @Operation(summary = "Удалить файл по id")

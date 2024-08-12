@@ -1,4 +1,4 @@
-package org.example.deltawebfacade.dto.file.library;
+package org.example.deltawebfacade.dto.file.paper;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +8,5 @@ import org.example.deltawebfacade.dto.file.FileBaseResponseDto;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class FileLibraryResponse extends FileBaseResponseDto {
-    private String author;
+public class FilePaperResponse extends FileBaseResponseDto {
 }

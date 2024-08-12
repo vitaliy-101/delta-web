@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PathResponse {
-    private String name;
+public class FileBaseResponseDto extends FileBaseDto {
+    private String downloadURL;
     private String path;
-    private Integer type;
+    private Long id;
     private String creationDate;
 }

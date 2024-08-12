@@ -1,11 +1,11 @@
-package org.example.deltawebfacade.dto.file.library;
+package org.example.deltawebfacade.dto.path.library;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.deltawebfacade.dto.file.PathFileBaseResponse;
-import org.example.deltawebfacade.file_system.Folder;
+import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
+import org.example.deltawebfacade.dto.path.PathResponse;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PathLibraryResponse extends PathFileBaseResponse {
+public class PathLibraryResponse extends PathResponse {
     private String author;
     private List<FileLibraryResponse> files;
     private List<PathLibraryResponse> folders;

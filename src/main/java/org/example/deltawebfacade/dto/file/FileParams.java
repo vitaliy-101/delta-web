@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PathRequest {
+public class FileParams {
+    private String page;
     private String author;
     private Integer year;
     private String path;
-    private String name;
 }

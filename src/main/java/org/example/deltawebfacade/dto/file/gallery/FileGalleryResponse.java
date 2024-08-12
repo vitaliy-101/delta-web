@@ -1,4 +1,4 @@
-package org.example.deltawebfacade.dto.file.library;
+package org.example.deltawebfacade.dto.file.gallery;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,6 @@ import org.example.deltawebfacade.dto.file.FileBaseResponseDto;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileLibraryResponse extends FileBaseResponseDto {
-    private String author;
+public class FileGalleryResponse extends FileBaseResponseDto {
+    private Integer year;
 }

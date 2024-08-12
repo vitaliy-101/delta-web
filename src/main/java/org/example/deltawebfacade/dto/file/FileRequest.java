@@ -15,8 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Сущность файла")
+@Schema(description = "Параметры файла")
 public class FileRequest {
-    @Schema(description = "Папка, в которой находится, в формате 'папка/еще_одна/тд/' ")
+    @Schema(description = "Расположение файла. Если файлы вложены в папки на страничке: /path1/path2, " +
+            "Если расположение пустое (т.е.) файл находится на уровне отображения странички, то оставляем только кавычки. Также " +
+            "названия папок в себе не содержат лишних '/' (именно в имени)")
     private String path;
+    @Schema(description = "Указываем автора, если требуется")
+    private String author;
+    @Schema(description = "Указываем год, если требуется")
+    private Integer year;
 }

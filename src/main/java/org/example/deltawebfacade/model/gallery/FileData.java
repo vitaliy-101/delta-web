@@ -20,6 +20,8 @@ public class FileData {
     private String name;
     @Column(name = "type")
     private Integer type;
+    @Column(name = "type_str")
+    private String typeStr;
     @Column(name = "file_data")
     private byte[] fileData;
     @Column(name = "path")
