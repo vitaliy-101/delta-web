@@ -69,7 +69,7 @@ public class FileService {
                     .name(fileName)
                     .type(getIntegerType(file.getContentType()))
                     .typeStr(file.getContentType())
-                    .fileData(FileUtils.compressFile(file.getBytes()))
+                    .fileData(file.getBytes())
                     .path(fileParams.getPage() + fileParams.getPath())
                     .author(fileParams.getAuthor())
                     .year(fileParams.getYear())
