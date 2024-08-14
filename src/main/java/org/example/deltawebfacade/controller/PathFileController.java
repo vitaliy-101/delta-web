@@ -66,9 +66,9 @@ public class PathFileController {
     @Operation(summary = "Все файлы для странички library",
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат library/")
     @GetMapping("/library")
-    public PathLibraryResponse getAllFilesLibrary() {
+    public PathLibraryResponse getAllFilesLibrary(@RequestParam(required = false) Boolean isAll) {
         //запихнуть в константы
-        return fileService.getFilesLibrary("library");
+        return fileService.getFilesLibrary("library", isAll);
     }
 
     @Operation(summary = "Все файлы для странички gallery",

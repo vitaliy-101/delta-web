@@ -103,12 +103,22 @@ public class FileService {
         return fileRepository.findByPage(page);
     }
 
-    public PathLibraryResponse getFilesLibrary(String page) {
+    public PathLibraryResponse getFilesLibrary(String page, Boolean isAll) {
         List<FileData> fileDataList = getAllFilesByPage(page);
-        return fileSystemGenerator.convertFilesToLibraryFolderStructure(
+        PathLibraryResponse pathLibraryResponse = fileSystemGenerator.convertFilesToLibraryFolderStructure(
                 dtoConverter.simpleConvert(fileDataList, FileLibraryResponse.class),
-                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathLibraryResponse.class)
-        );
+                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathLibraryResponse.class));
+        if (isAll) {
+            List<FileLibraryResponse> files = new ArrayList<>();
+            List<PathLibraryResponse> folders = new ArrayList<>();
+            for (PathLibraryResponse pathLibraryResponseDeepFirst : pathLibraryResponse.getFolders()) {
+                folders.addAll(pathLibraryResponseDeepFirst.getFolders());
+                files.addAll(pathLibraryResponseDeepFirst.getFiles());
+            }
+            pathLibraryResponse.setFolders(folders);
+            pathLibraryResponse.setFiles(files);
+        }
+        return pathLibraryResponse;
     }
 
     public PathGalleryResponse getFilesGallery(String page) {
