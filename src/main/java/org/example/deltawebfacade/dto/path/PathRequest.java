@@ -15,4 +15,6 @@ import org.example.deltawebfacade.dto.file.FileRequest;
 public class PathRequest extends FileRequest {
     @Schema(description = "Имя папки")
     private String name;
+    @Schema(description = "Находится ли в базе знаний", defaultValue = "false")
+    private Boolean isBase;
 }

@@ -29,6 +29,7 @@ create table if not exists files
     author VARCHAR,
     creation_date VARCHAR,
     year INTEGER,
+    is_base BOOLEAN,
     CONSTRAINT pk_files primary key (id)
 );
 

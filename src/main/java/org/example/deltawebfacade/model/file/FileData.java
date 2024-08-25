@@ -1,7 +1,6 @@
-package org.example.deltawebfacade.model.gallery;
+package org.example.deltawebfacade.model.file;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 @Entity
@@ -32,6 +31,8 @@ public class FileData {
     private String creationDate;
     @Column(name = "year")
     private Integer year;
+    @Column(name = "is_base")
+    private Boolean isBase;
 
 
 }

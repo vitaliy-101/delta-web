@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
 import org.example.deltawebfacade.dto.path.PathParams;
 import org.example.deltawebfacade.dto.path.PathRequest;
-import org.example.deltawebfacade.model.gallery.FileData;
+import org.example.deltawebfacade.dto.path.knowledge_base.KnowledgeBaseResponse;
+import org.example.deltawebfacade.model.file.FileData;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +28,7 @@ public class PathFileConverter extends DtoConverter {
         FileParams fileParams = convertFromFileRequest(pathRequest, page);
         PathParams pathParams = simpleConvert(fileParams, PathParams.class);
         pathParams.setName(pathRequest.getName());
+        pathParams.setIsBase(pathRequest.getIsBase());
         return pathParams;
     }
 
@@ -37,6 +39,20 @@ public class PathFileConverter extends DtoConverter {
         fileParams.setPath(fileRequest.getPath());
         fileParams.setPage(page);
         return fileParams;
+    }
+
+    public List<KnowledgeBaseResponse> convertFromModelListToKnowledgeResponse(List<FileData> fileDataList) {
+        return fileDataList.stream().map(this::convertFromModelToKnowledgeResponse).toList();
+    }
+
+    public KnowledgeBaseResponse convertFromModelToKnowledgeResponse(FileData fileData) {
+        KnowledgeBaseResponse knowledgeBaseResponse = new KnowledgeBaseResponse();
+        String page = fileData.getPath().split("/")[0];
+        knowledgeBaseResponse.setName(fileData.getName());
+        knowledgeBaseResponse.setPage(page);
+        knowledgeBaseResponse.setImageUrl(getDownloadUrl(simpleConvert(fileData, FileBaseResponseDto.class), page));
+        knowledgeBaseResponse.setFolderId(fileData.getId());
+        return knowledgeBaseResponse;
     }
 
 

@@ -14,9 +14,8 @@ import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.exceptions.NotFoundByIdException;
 import org.example.deltawebfacade.file_system.FileSystemGenerator;
 import org.example.deltawebfacade.mapper.DtoConverter;
-import org.example.deltawebfacade.model.gallery.FileData;
+import org.example.deltawebfacade.model.file.FileData;
 import org.example.deltawebfacade.repository.FileRepository;
-import org.example.deltawebfacade.utils.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,6 +73,7 @@ public class FileService {
                     .author(fileParams.getAuthor())
                     .year(fileParams.getYear())
                     .creationDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()))
+                    .isBase(false)
                     .build());
             return fileRepository.save(fileData);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class FileService {
         }
     }
 
-    public FileData uploadPath(PathParams pathParams) {
+    public FileData uploadPath(PathParams pathParams, MultipartFile file) throws Exception {
         FileData fileData = fileRepository.save(FileData.builder()
                 .name(pathParams.getName())
                 .type(0)
@@ -90,7 +90,17 @@ public class FileService {
                 .author(pathParams.getAuthor())
                 .year(pathParams.getYear())
                 .creationDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()))
+                .isBase(pathParams.getIsBase())
                 .build());
+        if (pathParams.getIsBase()) {
+            try {
+                fileData.setFileData(file.getBytes());
+                fileData.setTypeStr(file.getContentType());
+            }
+            catch (Exception e) {
+                throw new Exception("File could not be save");
+            }
+        }
         return fileRepository.save(fileData);
     }
 
@@ -135,6 +145,10 @@ public class FileService {
                 dtoConverter.simpleConvert(fileDataList, FilePaperResponse.class),
                 dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathPaperResponse.class)
         );
+    }
+
+    public List<FileData> getAllBasePaths() {
+        return fileRepository.findByBaseType();
     }
 
     public Boolean existById(Long id) {

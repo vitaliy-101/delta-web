@@ -12,4 +12,5 @@ import org.example.deltawebfacade.dto.file.FileParams;
 @NoArgsConstructor
 public class PathParams extends FileParams {
     private String name;
+    private Boolean isBase;
 }

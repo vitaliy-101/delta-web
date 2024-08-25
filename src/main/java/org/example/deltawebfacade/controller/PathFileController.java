@@ -2,18 +2,18 @@ package org.example.deltawebfacade.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
 import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.knowledge_base.KnowledgeBaseResponse;
 import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
 import org.example.deltawebfacade.dto.path.PathBaseDto;
 import org.example.deltawebfacade.dto.path.PathParams;
 import org.example.deltawebfacade.dto.path.PathRequest;
 import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.mapper.PathFileConverter;
-import org.example.deltawebfacade.model.gallery.FileData;
+import org.example.deltawebfacade.model.file.FileData;
 import org.example.deltawebfacade.service.file.FileService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -47,9 +47,10 @@ public class PathFileController {
     @Operation(summary = "Метод для создания папок", description = "Передаем так для всех страниц, тк можем отправлять json с любыми параметрами")
     @PostMapping(path = "/{page}")
     public PathBaseDto savePath(@PathVariable("page") String page,
-                                @RequestBody PathRequest pathRequest) {
+                                @RequestPart(value = "file", required = false) @Parameter(description = "файл") MultipartFile file,
+                                @RequestPart("pathRequest") PathRequest pathRequest) throws Exception {
         PathParams pathParams = pathFileConverter.convertFromPathRequest(pathRequest, page);
-        FileData fileData = fileService.uploadPath(pathParams);
+        FileData fileData = fileService.uploadPath(pathParams, file);
         return pathFileConverter.simpleConvert(fileData, PathBaseDto.class);
     }
 
@@ -67,7 +68,6 @@ public class PathFileController {
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат library/")
     @GetMapping("/library")
     public PathLibraryResponse getAllFilesLibrary(@RequestParam(required = false) Boolean isAll) {
-        //запихнуть в константы
         return fileService.getFilesLibrary("library", isAll);
     }
 
@@ -75,7 +75,6 @@ public class PathFileController {
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат gallery/")
     @GetMapping("/gallery")
     public PathGalleryResponse getAllFilesGallery() {
-        //запихнуть в константы
         return fileService.getFilesGallery("gallery");
     }
 
@@ -83,8 +82,14 @@ public class PathFileController {
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат paper/")
     @GetMapping("/paper")
     public PathPaperResponse getAllFilesPaper() {
-        //запихнуть в константы
         return fileService.getFilesPaper("paper");
+    }
+
+    @Operation(summary = "Все элементы базы знаний",
+            description = "Получаем все элементы из базы знаний")
+    @GetMapping("/base")
+    public List<KnowledgeBaseResponse> getAllBasePaths() {
+        return pathFileConverter.convertFromModelListToKnowledgeResponse(fileService.getAllBasePaths());
     }
 
     @Operation(summary = "Удалить файл по id")
@@ -92,6 +97,8 @@ public class PathFileController {
     public void deleteFileById(@PathVariable("fileId") String fileId, @PathVariable("page") String page) {
         fileService.deleteFileById(Long.valueOf(fileId));
     }
+
+
 
 
 }
