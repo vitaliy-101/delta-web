@@ -14,4 +14,5 @@ public class PathBaseDto {
     private String path;
     private Integer type;
     private String creationDate;
+    private Long id;
 }

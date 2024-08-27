@@ -56,7 +56,7 @@ public class PathFileController {
 
 
     @Operation(summary = "Скачать файл по ссылке по id", description = "Получаем в ответе файл для скачивания")
-    @GetMapping("/{page}/download/{fileId}")
+    @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") String fileId, @PathVariable("page") String page) throws Exception {
         FileData file = fileService.downloadFile(fileId);
         return ResponseEntity.ok()
