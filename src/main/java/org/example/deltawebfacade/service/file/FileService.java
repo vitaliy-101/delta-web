@@ -109,6 +109,11 @@ public class FileService {
                 .orElseThrow(() -> new NotFoundByIdException(FileService.class, Long.valueOf(id)));
     }
 
+    public byte[] getImageById(String id) throws Exception {
+        return fileRepository.findById(Long.valueOf(id))
+                .orElseThrow(() -> new NotFoundByIdException(FileService.class, Long.valueOf(id))).getFileData();
+    }
+
     public List<FileData> getAllFilesByPage(String page) {
         return fileRepository.findByPage(page);
     }

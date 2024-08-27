@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.List;
 @RestController()
 @RequiredArgsConstructor
@@ -64,6 +65,13 @@ public class PathFileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "fileUpload; filename=\""+ URLEncoder.encode(file.getName(), "UTF-8")
                         +"\"").body(new ByteArrayResource(file.getFileData()));
     }
+
+    @Operation(summary = "Получить картинку по id", description = "Получаем в ответе картинку")
+    @GetMapping("/image/{fileId}")
+    public byte[] getImageById(@PathVariable("fileId") String fileId) throws Exception {
+        return fileService.getImageById(fileId);
+    }
+
     @Operation(summary = "Все файлы для странички library",
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат library/")
     @GetMapping("/library")

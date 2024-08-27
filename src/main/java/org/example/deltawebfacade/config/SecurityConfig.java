@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(
                         req->req.requestMatchers("/login/**","/register/**", "/refresh_token/**", "/swagger-ui/**",
-                                        "/swagger-resources/*", "/v3/api-docs/**", "/delta/path-pages/download/**")
+                                        "/swagger-resources/*", "/v3/api-docs/**", "/delta/path-pages/download/**", "/delta/path-pages/image/**")
                                 .permitAll()
                                 .requestMatchers("/admin_only/**").hasAuthority("ADMIN")
                                 .anyRequest()
