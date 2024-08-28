@@ -106,6 +106,12 @@ public class PathFileController {
         fileService.deleteFileById(Long.valueOf(fileId));
     }
 
+    @Operation(summary = "Удалить файл по id")
+    @DeleteMapping("/delete/path/{fileId}")
+    public void deletePathById(@PathVariable("fileId") String fileId) {
+        fileService.deletePathById(Long.valueOf(fileId));
+    }
+
 
 
 

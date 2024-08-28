@@ -61,8 +61,7 @@ public class PathFileConverter extends DtoConverter {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/delta/path-pages/")
-                .path(page)
-                .path("/download/")
+                .path("download/")
                 .path(String.valueOf(fileBaseDto.getId()))
                 .toUriString();
     }

@@ -166,4 +166,16 @@ public class FileService {
         }
         fileRepository.deleteById(id);
     }
+
+    public void deletePathById(Long id) {
+        FileData path = fileRepository.findById(id)
+                .orElseThrow(() -> new NotFoundByIdException(FileData.class, id));
+        List<FileData> pathData = findByStartPath(path.getPath() + "/" + path.getName());
+        fileRepository.deletePathsByIds(pathData.stream().map(FileData::getId).toList());
+        fileRepository.deleteById(id);
+    }
+
+    public List<FileData> findByStartPath(String pathName) {
+        return fileRepository.findByPathStart(pathName);
+    }
 }
