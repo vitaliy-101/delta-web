@@ -7,7 +7,6 @@ import org.example.deltawebfacade.dto.AuthRequest;
 import org.example.deltawebfacade.exceptions.LoginException;
 import org.example.deltawebfacade.mapper.AuthMapper;
 import org.example.deltawebfacade.dto.AuthenticationResponse;
-import org.example.deltawebfacade.mapper.DtoConverter;
 import org.example.deltawebfacade.model.User;
 import org.example.deltawebfacade.service.auth.AuthenticationService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final AuthMapper authMapper;
-    private final DtoConverter dtoConverter;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
@@ -31,7 +29,10 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthRequest request) throws LoginException {
-        return ResponseEntity.ok(authenticationService.authenticate(dtoConverter.simpleConvert(request, User.class)));
+        var user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        return ResponseEntity.ok(authenticationService.authenticate(user));
     }
 
 }

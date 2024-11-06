@@ -25,10 +25,14 @@ public class MediaTypeAssociation {
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_XML = "application/xml";
 
+    public static final String FILE_PATH = "path";
+
     public static Map<Integer, List<String>> fileTypes = new HashMap<>();
     public static List<Integer> integerTypes = new ArrayList<>();
 
     static {
+        fileTypes.put(0, List.of(new String[]{FILE_PATH}));
+
         List<String> photoTypes = new ArrayList<>();
         photoTypes.add(IMAGE_JPEG);
         photoTypes.add(IMAGE_PNG);
@@ -60,6 +64,6 @@ public class MediaTypeAssociation {
         programDocumentTypes.add(APPLICATION_XML);
         fileTypes.put(5, programDocumentTypes);
 
-        integerTypes = Arrays.asList(1, 2, 3, 4, 5);
+        integerTypes = Arrays.asList(0, 1, 2, 3, 4, 5);
     }
 }

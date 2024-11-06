@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class Violation {
-    private final String timestamp;
+    private final String fieldName;
     private final String message;
-
+    private final String timestamp;
 }

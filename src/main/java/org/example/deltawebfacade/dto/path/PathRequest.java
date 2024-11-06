@@ -1,6 +1,7 @@
 package org.example.deltawebfacade.dto.path;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import org.example.deltawebfacade.dto.file.FileRequest;
 @Schema(description = "Параметры папки, схожи с файлом")
 public class PathRequest extends FileRequest {
     @Schema(description = "Имя папки")
+    @NotEmpty(message = "Name field is empty")
     private String name;
     @Schema(description = "Находится ли в базе знаний", defaultValue = "false")
     private Boolean isBase;
