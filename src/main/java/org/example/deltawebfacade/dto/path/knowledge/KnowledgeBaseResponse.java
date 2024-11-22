@@ -1,7 +1,6 @@
-package org.example.deltawebfacade.dto.path.knowledge_base;
+package org.example.deltawebfacade.dto.path.knowledge;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jdk.jfr.Description;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -2,9 +2,11 @@ package org.example.deltawebfacade.file_system;
 
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.gallery.FileGalleryResponse;
+import org.example.deltawebfacade.dto.file.knowledge.FileKnowledgeResponse;
 import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
 import org.example.deltawebfacade.dto.file.paper.FilePaperResponse;
 import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.knowledge.KnowledgeResponse;
 import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
 import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.mapper.PathFileConverter;
@@ -121,6 +123,33 @@ public class FileSystemGenerator {
                 PathPaperResponse currentFolder = pathFileConverter.simpleConvert(file, PathPaperResponse.class);
                 currentFolder.setCountFiles(currentFiles.size());
                 folder.addFolder(convertFilesToPaperFolderStructure(currentFiles, currentFolder));
+            }
+        }
+        return folder;
+    }
+
+    public KnowledgeResponse convertFilesToKnowledgeFolderStructure(List<FileKnowledgeResponse> files, KnowledgeResponse folder) {
+        folder.setFiles(new ArrayList<>());
+        folder.setFolders(new ArrayList<>());
+        for (FileKnowledgeResponse file : files) {
+            String pathName = folder.getPath() + "/" + folder.getName();
+            if (folder.getPath().isEmpty()) {
+                pathName = folder.getName();
+            }
+            if (file.getPath().equals(pathName)) {
+                if (file.getType() != 0) {
+                    file.setDownloadURL(pathFileConverter.getDownloadUrl(file, "gallery"));
+                    folder.addFile(file);
+                    continue;
+                }
+                final String pathNameFinal = pathName + "/" + file.getName();
+                List<FileKnowledgeResponse> currentFiles = files
+                        .stream()
+                        .filter(currentFile -> currentFile.getPath().startsWith(pathNameFinal))
+                        .toList();
+                KnowledgeResponse currentFolder = pathFileConverter.simpleConvert(file, KnowledgeResponse.class);
+                currentFolder.setCountFiles(currentFiles.size());
+                folder.addFolder(convertFilesToKnowledgeFolderStructure(currentFiles, currentFolder));
             }
         }
         return folder;

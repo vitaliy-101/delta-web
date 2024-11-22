@@ -6,7 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
 import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
-import org.example.deltawebfacade.dto.path.knowledge_base.KnowledgeBaseResponse;
+import org.example.deltawebfacade.dto.path.knowledge.KnowledgeBaseResponse;
+import org.example.deltawebfacade.dto.path.knowledge.KnowledgeResponse;
 import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
 import org.example.deltawebfacade.dto.path.PathBaseDto;
 import org.example.deltawebfacade.dto.path.PathParams;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.List;
 @RestController()
 @RequiredArgsConstructor
@@ -75,8 +75,8 @@ public class PathFileController {
     @Operation(summary = "Все файлы для странички library",
             description = "Получаем дерево папок и файлов, которые в начале своего path содержат library/")
     @GetMapping("/library")
-    public PathLibraryResponse getAllFilesLibrary(@RequestParam(required = false) Boolean isAll) {
-        return fileService.getFilesLibrary("library", isAll);
+    public PathLibraryResponse getAllFilesLibrary() {
+        return fileService.getFilesLibrary("library");
     }
 
     @Operation(summary = "Все файлы для странички gallery",
@@ -91,6 +91,13 @@ public class PathFileController {
     @GetMapping("/paper")
     public PathPaperResponse getAllFilesPaper() {
         return fileService.getFilesPaper("paper");
+    }
+
+    @Operation(summary = "Все элементы базы знаний",
+            description = "Получаем все элементы из базы знаний")
+    @GetMapping("/base/{section}")
+    public KnowledgeResponse getBasePathAndFiles(@PathVariable String section) {
+        return fileService.getFilesKnowledge("base/" + section);
     }
 
     @Operation(summary = "Все элементы базы знаний",

@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.constants.MediaTypeAssociation;
 import org.example.deltawebfacade.dto.file.FileParams;
 import org.example.deltawebfacade.dto.file.gallery.FileGalleryResponse;
+import org.example.deltawebfacade.dto.file.knowledge.FileKnowledgeResponse;
 import org.example.deltawebfacade.dto.file.paper.FilePaperResponse;
 import org.example.deltawebfacade.dto.path.PathParams;
 import org.example.deltawebfacade.dto.path.PathResponse;
 import org.example.deltawebfacade.dto.file.library.FileLibraryResponse;
 import org.example.deltawebfacade.dto.path.gallery.PathGalleryResponse;
+import org.example.deltawebfacade.dto.path.knowledge.KnowledgeResponse;
 import org.example.deltawebfacade.dto.path.library.PathLibraryResponse;
 import org.example.deltawebfacade.dto.path.paper.PathPaperResponse;
 import org.example.deltawebfacade.exceptions.NotFoundByIdException;
@@ -85,7 +87,7 @@ public class FileService {
         FileData fileData = fileRepository.save(FileData.builder()
                 .name(pathParams.getName())
                 .type(0)
-                .typeStr("Path")
+                .typeStr("path")
                 .path(pathParams.getPage() + pathParams.getPath())
                 .author(pathParams.getAuthor())
                 .year(pathParams.getYear())
@@ -118,21 +120,21 @@ public class FileService {
         return fileRepository.findByPage(page);
     }
 
-    public PathLibraryResponse getFilesLibrary(String page, Boolean isAll) {
+    public PathLibraryResponse getFilesLibrary(String page) {
         List<FileData> fileDataList = getAllFilesByPage(page);
         PathLibraryResponse pathLibraryResponse = fileSystemGenerator.convertFilesToLibraryFolderStructure(
                 dtoConverter.simpleConvert(fileDataList, FileLibraryResponse.class),
                 dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathLibraryResponse.class));
-        if (isAll) {
-            List<FileLibraryResponse> files = new ArrayList<>();
-            List<PathLibraryResponse> folders = new ArrayList<>();
-            for (PathLibraryResponse pathLibraryResponseDeepFirst : pathLibraryResponse.getFolders()) {
-                folders.addAll(pathLibraryResponseDeepFirst.getFolders());
-                files.addAll(pathLibraryResponseDeepFirst.getFiles());
-            }
-            pathLibraryResponse.setFolders(folders);
-            pathLibraryResponse.setFiles(files);
-        }
+//        if (isAll) {
+//            List<FileLibraryResponse> files = new ArrayList<>();
+//            List<PathLibraryResponse> folders = new ArrayList<>();
+//            for (PathLibraryResponse pathLibraryResponseDeepFirst : pathLibraryResponse.getFolders()) {
+//                folders.addAll(pathLibraryResponseDeepFirst.getFolders());
+//                files.addAll(pathLibraryResponseDeepFirst.getFiles());
+//            }
+//            pathLibraryResponse.setFolders(folders);
+//            pathLibraryResponse.setFiles(files);
+//        }
         return pathLibraryResponse;
     }
 
@@ -149,6 +151,14 @@ public class FileService {
         return fileSystemGenerator.convertFilesToPaperFolderStructure(
                 dtoConverter.simpleConvert(fileDataList, FilePaperResponse.class),
                 dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), PathPaperResponse.class)
+        );
+    }
+
+    public KnowledgeResponse getFilesKnowledge(String page) {
+        List<FileData> fileDataList = getAllFilesByPage(page);
+        return fileSystemGenerator.convertFilesToKnowledgeFolderStructure(
+                dtoConverter.simpleConvert(fileDataList, FileKnowledgeResponse.class),
+                dtoConverter.simpleConvert(createBasePathResponse(fileDataList.size(), page), KnowledgeResponse.class)
         );
     }
 

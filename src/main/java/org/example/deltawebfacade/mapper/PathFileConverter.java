@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.deltawebfacade.dto.file.*;
 import org.example.deltawebfacade.dto.path.PathParams;
 import org.example.deltawebfacade.dto.path.PathRequest;
-import org.example.deltawebfacade.dto.path.knowledge_base.KnowledgeBaseResponse;
+import org.example.deltawebfacade.dto.path.knowledge.KnowledgeBaseResponse;
 import org.example.deltawebfacade.model.file.FileData;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
