@@ -16,4 +16,5 @@ public class KnowledgeBaseResponse {
     private String page;
     @Schema(description = "Id папки")
     private Long folderId;
+    private String description;
 }

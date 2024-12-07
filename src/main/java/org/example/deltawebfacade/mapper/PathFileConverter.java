@@ -9,6 +9,7 @@ import org.example.deltawebfacade.model.file.FileData;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -47,6 +48,16 @@ public class PathFileConverter extends DtoConverter {
 
     public KnowledgeBaseResponse convertFromModelToKnowledgeResponse(FileData fileData) {
         KnowledgeBaseResponse knowledgeBaseResponse = new KnowledgeBaseResponse();
+        switch (fileData.getName()) {
+            case "beginner_pack" -> knowledgeBaseResponse.setDescription("Пакет новичка");
+            case "technology" -> knowledgeBaseResponse.setDescription("Технологии и конструирование");
+            case "production" -> knowledgeBaseResponse.setDescription("Производство");
+            case "knowledge" -> knowledgeBaseResponse.setDescription("Общие знания");
+            case "marketing" -> knowledgeBaseResponse.setDescription("Продажи и маркетинг");
+            case "1c" -> knowledgeBaseResponse.setDescription("1C:ERP");
+            case "who" -> knowledgeBaseResponse.setDescription("КТО");
+            case "accounting" -> knowledgeBaseResponse.setDescription("Бухгалтерия и финансы");
+        }
         String page = fileData.getPath().split("/")[0];
         knowledgeBaseResponse.setName(fileData.getName());
         knowledgeBaseResponse.setPage(page);
