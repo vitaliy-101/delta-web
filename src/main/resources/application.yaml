@@ -2,10 +2,10 @@ spring:
   application:
     name: delta-web-facade
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5433/delta-db?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    url: ${DATABASE_URL}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 007787898
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
