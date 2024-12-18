@@ -14,7 +14,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openApi() {
         Server server = new Server();
-        server.setUrl("http://localhost:8080");
+        server.setUrl("https://delta-backend-7dox.onrender.com");
         server.setDescription("Server");
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI().info(new Info().title("Delta-web").description("API documentation").version("1"))
