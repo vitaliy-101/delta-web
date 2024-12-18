@@ -2,10 +2,10 @@ spring:
   application:
     name: delta-web-facade
   datasource:
-    url: ${DATABASE_URL}
+    url: jdbc:postgresql://ep-jolly-wave-a5gorca9.us-east-2.aws.neon.tech/delta-db?sslmode=require
     driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USER}
-    password: ${DATABASE_PASSWORD}
+    username: delta-db_owner
+    password: 2SgGRntzqc1b
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
@@ -18,6 +18,4 @@ spring:
       max-file-size: -1
       max-request-size: -1
 
-server:
-  port: 8081
 

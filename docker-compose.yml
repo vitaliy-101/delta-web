@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+    ports:
+      - "8081:8081"
+    environment:
+      SPRINGDATASOURCEURL: jdbc:postgresql://db:5433/delta-db
+      SPRINGDATASOURCEUSERNAME: postgres
+      SPRINGDATASOURCEPASSWORD: 007787898
+    depends_on:
+      - db
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: delta-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 007787898
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+    postgres-data:
